@@ -27,17 +27,17 @@ app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-// whoami endpoint for header parser
-app.get('/api/whoami', function (req, res) {
-  res.json({
-    ipaddress: req.ip,
-    language: req.headers['accept-language'],
-    software: req.headers['user-agent']
-  });
-});
-
-// timestamp microservice endpoint
+// timestamp microservice endpoint - handle all cases
 app.get('/api/:date?', function (req, res) {
+  // Skip if this is the whoami endpoint
+  if (req.params.date === 'whoami') {
+    return res.json({
+      ipaddress: req.ip,
+      language: req.headers['accept-language'],
+      software: req.headers['user-agent']
+    });
+  }
+  
   let date;
   
   // Handle empty date parameter - return current time
