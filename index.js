@@ -36,6 +36,36 @@ app.get('/api/whoami', function (req, res) {
   });
 });
 
+// timestamp microservice endpoint
+app.get('/api/:date?', function (req, res) {
+  let date;
+  
+  // Handle empty date parameter - return current time
+  if (!req.params.date) {
+    date = new Date();
+  } else {
+    let dateInput = req.params.date;
+    
+    // Check if input is a unix timestamp (number)
+    if (/^\d+$/.test(dateInput)) {
+      date = new Date(parseInt(dateInput));
+    } else {
+      // Try to parse as date string
+      date = new Date(dateInput);
+    }
+  }
+  
+  // Check if date is valid
+  if (date.toString() === 'Invalid Date') {
+    res.json({ error: 'Invalid Date' });
+  } else {
+    res.json({
+      unix: date.getTime(),
+      utc: date.toUTCString()
+    });
+  }
+});
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
